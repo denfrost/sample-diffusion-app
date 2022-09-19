@@ -1,0 +1,18 @@
+{
+  "name": "backend",
+  "private": true,
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "mock": "python src/mock.py",
+    "infer": "python src/inference.py --ckpt ckpt/model.ckpt --out_path out --n_steps 25 --n_samples 16 --seed 42",
+    "install-pydeps": "npx ts-node scripts/install.ts"
+  },
+  "dependencies": {
+    "ts-node": "^10.9.1"
+  },
+  "devDependencies": {
+    "typescript": "4.7.4",
+    "@types/node": "^18.7.18"
+  }
+}

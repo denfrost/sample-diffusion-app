@@ -1,0 +1,25 @@
+{
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "mock": "yarn workspace backend run mock",
+    "db-push": "yarn workspace @sampleforge/db run db-push ",
+    "studio": "npm workspace @sampleforge/db run studio ",
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "dev:web": "yarn workspace web dev",
+    "clean": "find . -name node_modules -o -name .next -o -name .expo -type d -prune | xargs rm -rf",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "devDependencies": {
+    "prettier": "latest",
+    "turbo": "latest"
+  },
+  "engines": {
+    "node": "^16.13.0"
+  }
+}
