@@ -41,14 +41,14 @@ function assertPipInstalled() {
   }
 }
 
-function createOutFolder() {
-  const outFolder = path.join(process.cwd(), "out");
+function createSubFolder(folder: string) {
+  const subFolder = path.join(process.cwd(), folder);
 
-  if (fs.existsSync(outFolder)) {
-    fs.rmSync(outFolder, { recursive: true, force: true });
+  if (fs.existsSync(subFolder)) {
+    fs.rmSync(subFolder, { recursive: true, force: true });
   }
 
-  fs.mkdirSync(outFolder);
+  fs.mkdirSync(subFolder);
 }
 
 function gitClone(path: string, opts?: { recursive?: boolean }) {
@@ -64,7 +64,8 @@ function pipInstall(path: string) {
 }
 
 function cloneGitRepos() {
-  createOutFolder();
+  createSubFolder("out");
+  createSubFolder("ckpt");
 
   // cd to out dir
   process.chdir(path.join(process.cwd(), "out"));
