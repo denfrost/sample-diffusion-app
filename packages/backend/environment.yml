@@ -1,0 +1,22 @@
+name: dd
+channels:
+  - pytorch
+  - defaults
+  - conda-forge
+dependencies: 
+  - git
+  - flask
+  - python=3.8.5
+  - pip=20.3
+  - cudatoolkit=11.3
+  - pytorch=1.11.0
+  - torchvision=0.12.0
+  - numpy=1.19.2
+  - flask-socketio
+  - eventlet
+  - pip:
+    - pytorch-lightning==1.4.2
+    - simple-websocket
+    - -e git+https://github.com/harmonai-org/sample-generator#egg=audio_diffusion
+    - -e git+https://github.com/crowsonkb/v-diffusion-pytorch#egg=diffusion
+    - -e git+https://github.com/openai/CLIP#egg=clip
