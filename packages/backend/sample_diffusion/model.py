@@ -1,14 +1,6 @@
-import os, argparse, math, gc
-import torchaudio
 import torch
 from torch import nn
-from pytorch_lightning import seed_everything
-from einops import rearrange
-from diffusion import sampling
 from audio_diffusion.models import DiffusionAttnUnet1D
-from audio_diffusion.utils import Stereo, PadCrop
-from flask import Flask
-from flask_socketio import SocketIO
 
 def load_model(model_args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

@@ -1,51 +1,31 @@
-import os, argparse, math, gc
+import os, argparse
 import torchaudio
-import torch
-from torch import nn
-from pytorch_lightning import seed_everything
-from einops import rearrange
-from diffusion import sampling
-from audio_diffusion.models import DiffusionAttnUnet1D
-from audio_diffusion.utils import Stereo, PadCrop
-from flask import Flask
-from flask_socketio import SocketIO
-
 from sample_diffusion.model import load_model
 from sample_diffusion.inference import generate_audio
-from sample_diffusion.server import SocketIOServer, create_socket_server, start_socket_server
+from sample_diffusion.server import SocketIOServer
 
 def main():
-    args, generation_args = parse_cli_args()
+    args = parse_cli_args()
     
-    # load model
     model, device = load_model(args)
 
-    server = SocketIOServer()
-    
-    # create socket server
-    socketio, app = create_socket_server(args.ws_host, args.ws_port, args.public_url)
+    server = create_server(args, model, device)
+    server.start()
 
-    start_socket_server(socketio, app, args)
+def create_server(args, model, device):
 
-    # set seed
-    #generation_args.seed = set_seed(generation_args.seed)
+    server = SocketIOServer(args, host=args.ws_host, port=args.ws_port, website_url=args.public_url)
 
-    # generate
-    #audio_out = generate_audio(generation_args, args, device, model, create_progress_callback(socketio, 'zzz'))
-    
-    # save audio
-    #save_audio(generation_args, args, audio_out)
+    def generate(generation_args, socketio):
 
-def set_seed(new_seed):
-    if new_seed != -1:
-        seed = new_seed
-    else:
-        seed = torch.seed()
-    seed = seed % 4294967295
-    seed_everything(seed)
-    return seed
+        audio_out = generate_audio(generation_args, args, device, model, server.progress_cb())
+        save_audio(generation_args, args, audio_out)
 
-# ----- generation
+        pass
+
+    server.ongenerate = generate
+
+    return 
 
 def save_audio(generation_args, model_args, audio_out, base_out_path):
     output_path = get_output_path(generation_args, base_out_path)
@@ -67,9 +47,6 @@ def get_output_path(generation_args, base_out_path):
     
     return os.path.join(base_out_path, "generations", f'{generation_args.seed}_{generation_args.n_steps}/')
     
-
-# ----- args
-
 def parse_cli_args():
     parser = argparse.ArgumentParser()
 
@@ -96,10 +73,6 @@ def parse_cli_args():
     parser.add_argument("--input", type = str, default = '', help = "path to the audio to be used for audio2audio")
 
     return parser.parse_args()
-
-# ----- websocket
-
-
 
 if __name__ == "__main__":
     main()

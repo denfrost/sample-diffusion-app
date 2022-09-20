@@ -1,14 +1,22 @@
-import os, argparse, math, gc
+import math, gc
 import torchaudio
 import torch
 from diffusion import sampling
 from audio_diffusion.utils import Stereo, PadCrop
+from pytorch_lightning import seed_everything
 
-class GenerationOptions:
-    def __init__(self, foo, bar):
-        pass
+def set_seed(new_seed):
+    if new_seed != -1:
+        seed = new_seed
+    else:
+        seed = torch.seed()
+    seed = seed % 4294967295
+    seed_everything(seed)
+    return seed
 
-def generate_audio(generation_args, args, device, model, callback):
+def generate_audio(generation_args, args, device, model, callback=None):
+    generation_args.seed = set_seed(generation_args.seed)
+
     input_path = generation_args.input
     input_sr = generation_args.input_sr
 
@@ -23,7 +31,7 @@ def generate_audio(generation_args, args, device, model, callback):
 
     return audio_out
 
-def rand2audio(device, model, chunk_size, batch_size, n_steps):
+def rand2audio(device, model, chunk_size, batch_size, n_steps, callback=None):
     torch.cuda.empty_cache()
     gc.collect()
     
@@ -31,9 +39,9 @@ def rand2audio(device, model, chunk_size, batch_size, n_steps):
     t = torch.linspace(1, 0, n_steps + 1, device = device)[:-1]
     step_list = get_crash_schedule(t)
 
-    return sampling.iplms_sample(model, noise, step_list, {}).clamp(-1, 1)
+    return sampling.iplms_sample(model, noise, step_list, {}, callback=callback).clamp(-1, 1)
 
-def audio2audio(device, model, chunk_size, batch_size, n_steps, audio_input, noise_level, sample_length_multiplier):
+def audio2audio(device, model, chunk_size, batch_size, n_steps, audio_input, noise_level, sample_length_multiplier, callback=None):
     effective_length = chunk_size * sample_length_multiplier
 
     torch.cuda.empty_cache()
@@ -50,7 +58,7 @@ def audio2audio(device, model, chunk_size, batch_size, n_steps, audio_input, noi
     noise = torch.randn([batch_size, 2, effective_length], device='cuda')
     noised_audio = audio * alpha + noise * sigma
 
-    return sampling.iplms_sample(model, noised_audio, step_list.flip(0)[:-1], {})
+    return sampling.iplms_sample(model, noised_audio, step_list.flip(0)[:-1], {}, callback=callback)
 
 def get_crash_schedule(t):
     sigma = torch.sin(t * math.pi / 2) ** 2
