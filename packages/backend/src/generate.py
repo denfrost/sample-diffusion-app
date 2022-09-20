@@ -1,15 +1,18 @@
 import os, argparse, math, gc
 
+import torchaudio
+
 import torch
 from torch import optim, nn
 
-import torchaudio
+from pytorch_lightning import seed_everything
+from einops import rearrange
 
 from diffusion import sampling
 from audio_diffusion.models import DiffusionAttnUnet1D
 from audio_diffusion.utils import Stereo, PadCrop
-from pytorch_lightning import seed_everything
-from einops import rearrange
+
+# conda update -n base -c defaults conda
 
 class DiffusionInference(nn.Module):
     def __init__(self, global_args):

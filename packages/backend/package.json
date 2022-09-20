@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "mock": "python src/mock.py",
-    "infer": "python src/inference.py --ckpt ckpt/model.ckpt --out_path out --n_steps 25 --n_samples 16 --seed 42",
+    "start": "python src/inference_server.py",
+    "generate": "python src/generate.py",
     "install-pydeps": "npx ts-node scripts/install.ts"
   },
   "dependencies": {

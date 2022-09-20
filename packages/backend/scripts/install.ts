@@ -2,41 +2,48 @@ import { execSync } from "child_process";
 import * as path from "path";
 import * as fs from "fs";
 
+const requiredCommands = [
+  'conda',
+  'git',
+  'python',
+  'pip'
+];
+
+
+install();
+
 function install() {
-  assertGitInstalled();
-  assertPythonInstalled();
-  assertPipInstalled();
+  assertCommandsInstalled(requiredCommands);
 
   cloneGitRepos();
 
   installPythonPackages();
 }
 
-function assertGitInstalled() {
-  try {
-    execSync("git --version");
-  } catch (error) {
-    console.error("Git is not installed. Please install git and try again.");
-    process.exit(1);
-  }
+function installPythonPackages() {
+  const cwd = process.cwd();
+
+  // the repos we cloned
+  pipInstall(path.join(cwd, "sample-generator"));
+  pipInstall(path.join(cwd, "v-diffusion-pytorch"));
+
+  // deps
+  pipInstall("flask-socketio");
+  pipInstall("eventlet");
+  pipInstall("simple-websocket");
 }
 
-function assertPythonInstalled() {
-  try {
-    execSync("python --version");
-  } catch (error) {
-    console.error(
-      "Python is not installed. Please install python and try again."
-    );
-    process.exit(1);
-  }
+
+
+function assertCommandsInstalled(names: string[]) {
+  names.forEach(name => assertCommandInstalled(name));
 }
 
-function assertPipInstalled() {
+function assertCommandInstalled(name: string) {
   try {
-    execSync("pip --version");
+    execSync(`${name} --version`);
   } catch (error) {
-    console.error("Pip is not installed. Please install pip and try again.");
+    console.error(`${name} is not installed. Please install ${name} and try again.`);
     process.exit(1);
   }
 }
@@ -78,18 +85,4 @@ function cloneGitRepos() {
   });
 }
 
-function installPythonPackages() {
-  const cwd = process.cwd();
 
-  // the repos we cloned
-  pipInstall(path.join(cwd, "sample-generator"));
-  pipInstall(path.join(cwd, "v-diffusion-pytorch"));
-
-  // deps
-  pipInstall("ipywidgets==7.7.1");
-  pipInstall("flask-socketio");
-  pipInstall("eventlet");
-  pipInstall("simple-websocket");
-}
-
-install();
