@@ -82,13 +82,11 @@ def audio2audio(device, model, chunk_size, batch_size, n_steps, audio_input, noi
     return sampling.iplms_sample(model, noised_audio, step_list.flip(0)[:-1], {})
 
 def save_audio(output_path, audio_out, sample_rate):
-    try: 
-        os.mkdir(output_path)
-    except OSError as error: 
-        print(error)
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
 
     for ix, sample in enumerate(audio_out):
-        output_file = f'{output_path}sample #{ix + 1}.wav'
+        output_file = os.path.join(output_path, f'sample #{ix + 1}.wav')
         open(output_file, 'a').close()
         output = sample.cpu()
         torchaudio.save(output_file, output, sample_rate)
@@ -113,7 +111,7 @@ def main():
     parser.add_argument("--input_sr", type = int, default = 44100, help = "samplerate of the input audio specified in --input")
     parser.add_argument("--noise_level", type = float, default = 0.7, help = "noise level for audio2audio")
     parser.add_argument("--sample_length_multiplier", type = int, default = 1, help = "sample length multiplier for audio2audio")
-    parser.add_argument("--out_path", type = str, default = "audio_out/", help = "path to the folder for the samples to be saved in")
+    parser.add_argument("--out_path", type = str, default = "audio_out", help = "path to the folder for the samples to be saved in")
     parser.add_argument("--n_steps", type = int, default = 25, help = "number of sampling steps")
     parser.add_argument("--n_samples", type = int, default = 1, help = "how many samples to produce / batch size")
     parser.add_argument("--spc", type = int, default = 65536, help = "the samples per chunk of the model")
@@ -133,9 +131,9 @@ def main():
     sample_length_multiplier = args.sample_length_multiplier
     
     if input_path:
-        output_path = f'{args.out_path}/{current_seed}_{inference_n_steps}_{noise_level}/'
+        output_path = os.path.join(args.out_path, "variations", f'{current_seed}_{inference_n_steps}_{noise_level}/')
     else:
-        output_path = f'{args.out_path}/{current_seed}_{inference_n_steps}/'
+        output_path = os.path.join(args.out_path, "generations", f'{current_seed}_{inference_n_steps}/')
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 

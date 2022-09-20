@@ -48,3 +48,5 @@ yarn-error.log*
 
 # conda
 condaenv.*.requirements.txt
+models
+audio_out

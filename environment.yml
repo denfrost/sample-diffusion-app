@@ -15,5 +15,7 @@ dependencies:
   - setuptools
   - pip:
     - pytorch-lightning==1.4.2
-    - -e git+https://github.com/harmonai-org/sample-generator.git#egg=audio_diffusion
-    - -e git+https://github.com/crowsonkb/v-diffusion-pytorch.git#egg=v-diffusion-pytorch
+    - torchmetrics==0.6.0
+    - PySoundFile
+    - git+https://github.com/harmonai-org/sample-generator.git#egg=audio_diffusion
+    - git+https://github.com/crowsonkb/v-diffusion-pytorch.git#egg=v-diffusion-pytorch
