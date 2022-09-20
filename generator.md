@@ -23,5 +23,4 @@ python ./scripts/generate.py
 
 ## Generator CLI Arguments
 
-```
-```
+[See available arguments and defaults.](https://github.com/sudosilico/sample-diffusion/blob/main/packages/backend/scripts/generate.py#L50:L50)
