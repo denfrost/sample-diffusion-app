@@ -1,5 +1,7 @@
 # Generator Guide
 
+
+
 Clone the repo and `cd` into it:
 ```
 git clone https://github.com/sudosilico/sample-diffusion
@@ -13,6 +15,7 @@ cd sample-diffusion
 ```
 cd ./packages/backend
 conda env create -f environment.yml
+conda activate sd_backend
 ```
 
 Make a `models` folder and place your model in `packages/backend/models/model.ckpt`, then run the generator:
