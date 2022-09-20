@@ -4,13 +4,17 @@ import torch
 from diffusion import sampling
 from audio_diffusion.utils import Stereo, PadCrop
 
-def generate_audio(generation_args, model_args, device, model, socketio, callback):
+class GenerationOptions:
+    def __init__(self, foo, bar):
+        pass
+
+def generate_audio(generation_args, args, device, model, callback):
     input_path = generation_args.input
     input_sr = generation_args.input_sr
 
-    spc = model_args.spc
-    n_samples = model_args.n_samples
-    n_steps = model_args.n_steps
+    spc = args.spc
+    n_samples = args.n_samples
+    n_steps = args.n_steps
 
     if generation_args.input:
         audio_out = audio2audio(device, model.diffusion_ema, spc, n_samples, n_steps, load_to_device(device, input_path, input_sr), generation_args.noise_level, generation_args.sample_length_multiplier, callback)
