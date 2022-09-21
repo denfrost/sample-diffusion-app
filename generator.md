@@ -1,4 +1,4 @@
-# Generator Guide
+# Inference CLI Guide
 
 ## Requirements
 
