@@ -10,18 +10,17 @@ from audio_diffusion.utils import Stereo, PadCrop
 
 from sample_diffusion.model import load_model
 from sample_diffusion.inference import generate_audio
-from sample_diffusion.server import SocketIOServer, create_socket_server, start_socket_server
 
 def main():
-    args, generation_args = parse_cli_args()
+    args = parse_cli_args()
 
     model, device = load_model(args)
-    audio_out = generate_audio(generation_args, args, device, model)
+    audio_out = generate_audio(args, args, device, model)
 
-    save_audio(generation_args, args, audio_out)
+    save_audio(args, audio_out)
 
-def save_audio(generation_args, model_args, audio_out, base_out_path):
-    output_path = get_output_path(generation_args, base_out_path)
+def save_audio(args, audio_out):
+    output_path = get_output_path(args)
 
     if not os.path.exists(output_path):
         os.makedirs(output_path)
@@ -30,19 +29,19 @@ def save_audio(generation_args, model_args, audio_out, base_out_path):
         output_file = os.path.join(output_path, f'sample #{ix + 1}.wav')
         open(output_file, 'a').close()
         output = sample.cpu()
-        torchaudio.save(output_file, output, model_args.sr)
+        torchaudio.save(output_file, output, args.sr)
         
     print(f'Your samples are waiting for you here: {output_path}')
 
-def get_output_path(generation_args, base_out_path):
-    seed = generation_args.seed
-    steps = generation_args.n_steps
-    noise = generation_args.noise_level
+def get_output_path(args):
+    seed = args.seed
+    steps = args.n_steps
+    noise = args.noise_level
 
-    if generation_args.input:
-        return os.path.join(base_out_path, "variations", f'{seed}_{steps}_{noise}/')
+    if args.input:
+        return os.path.join(args.out_path, "variations", f'{seed}_{steps}_{noise}/')
 
-    return os.path.join(base_out_path, "generations", f'{seed}_{steps}/')
+    return os.path.join(args.out_path, "generations", f'{seed}_{steps}/')
     
 def parse_cli_args():
     parser = argparse.ArgumentParser()
