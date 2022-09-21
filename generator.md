@@ -4,7 +4,6 @@
 
 - git (to clone the repo)
 - conda (to set up the python environment)
-- ~~yarn~~ (not required for the CLI)
 
 You can check for these commands with `git --version` and `conda --version`.
 
