@@ -1,6 +1,7 @@
 import os, argparse, math, gc
 import torchaudio
 import torch
+import json
 from torch import nn
 
 from einops import rearrange
@@ -32,16 +33,35 @@ def save_audio(args, audio_out):
         torchaudio.save(output_file, output, args.sr)
         
     print(f'Your samples are waiting for you here: {output_path}')
+    print(f'Seed: {args.seed}, Steps: {args.n_steps}, Noise: {args.noise_level}')
+
+def load_number_file(path):
+    with open(path, 'r') as f:
+        return int(f.read())
+
+def save_number_file(path, num):
+    with open(path, 'w') as f:
+        f.write(str(num))
+
+def write_to_json(obj, path):
+    with open(path, 'w') as f:
+        json.dump(obj, f)
 
 def get_output_path(args):
     seed = args.seed
     steps = args.n_steps
     noise = args.noise_level
 
+    val = load_number_file("value.txt")
+    
     if args.input:
-        return os.path.join(args.out_path, "variations", f'{seed}_{steps}_{noise}/')
+        parent_folder = os.path.join(args.out_path, f'variations{val}')
+    else:
+        parent_folder = os.path.join(args.out_path, f'generations{val}')
 
-    return os.path.join(args.out_path, "generations", f'{seed}_{steps}/')
+    write_to_json(args, os.path.join(parent_folder, 'meta.json'))
+
+    return parent_folder
     
 def parse_cli_args():
     parser = argparse.ArgumentParser()

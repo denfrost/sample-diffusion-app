@@ -1,6 +1,16 @@
 # Generator Guide
 
+## Requirements
 
+- git (to clone the repo)
+- conda (to set up the python environment)
+- ~~yarn~~ (not required for the CLI)
+
+You can check for these commands with `git --version` and `conda --version`.
+
+An easy way to get `conda` on Windows is by installing [Anaconda](https://www.anaconda.com/) and then using the "Anaconda Prompt".
+
+## Clone the repo
 
 Clone the repo and `cd` into it:
 ```
@@ -22,6 +32,12 @@ Make a `models` folder and place your model in `packages/backend/models/model.ck
 
 ```
 python ./scripts/generate.py
+```
+
+Alternatively, you can pass a custom model path as an argument:
+
+```
+python ./scripts/generate.py --ckpt models/some-other-model.ckpt
 ```
 
 ## Generator CLI Arguments
