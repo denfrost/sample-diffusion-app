@@ -1,1 +1,1 @@
-# sample-diffusion
+# Sample Diffusion
